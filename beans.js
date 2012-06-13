@@ -25,7 +25,7 @@ var SleepLog = Backbone.Collection.extend({
   localStorage: new Store("sleep-backbone")
 });
 
-var SleepLog = new SleepLog;
+//var SleepLog = new SleepLog;
 
 
 var SleepItemView = Backbone.View.extend({
@@ -50,8 +50,11 @@ var SleepItemView = Backbone.View.extend({
 
 });
 
+var SleepAddView = Backbone.View.extend({ 
+  
+});
+
 var SleepView = Backbone.View.extend({
-  el: $('#sleep-app'),
   
   initialize: function() { 
     this.input_start_date  = this.$("#start-date");
@@ -61,9 +64,8 @@ var SleepView = Backbone.View.extend({
     this.time_between = this.$("#time-between");
     this.inputReset();
 
-    SleepLog.bind('add', this.addOne, this);
-    SleepLog.bind('reset', this.addAll, this);
-    SleepLog.fetch();
+    this.model.bind('add', this.addOne, this);
+    this.model.bind('reset', this.addAll, this);
   },
 
   inputReset: function() {
@@ -125,7 +127,7 @@ var SleepView = Backbone.View.extend({
 
 
   addAll: function() {
-    SleepLog.each(this.addOne);
+    this.model.each(this.addOne);
   },
 
   addOne: function(sleep) {
@@ -138,12 +140,12 @@ var SleepView = Backbone.View.extend({
   createOnEnter: function(e) {
     if (e.keyCode == 13) {
       if (this.timeDiff() > 0) {
-        var sleep = SleepLog.create({
+        var sleep = this.model.create({
           dtStart: this.startTime(),
           dtEnd: this.endTime()
         });
 
-        SleepLog.add(sleep);
+        this.model.add(sleep);
 
         this.inputReset();
       }
@@ -155,4 +157,30 @@ var SleepView = Backbone.View.extend({
   }
 });
 
-var SleepApp = new SleepView;
+
+var AppRoutes = Backbone.Router.extend({
+  routes: {
+    "sleep/log": "sleepLog",
+    "sleep/add": "addSleep"
+  },
+
+  addSleep: function() {
+    //$('#pastabeans').children().addClass('hidden');
+    //$('#hi-app').removeClass('hidden');
+  },
+
+  sleepLog: function() {
+    var sleepLog = new SleepLog();
+    sleepLog.fetch(
+    { 
+      success: function() {
+        $("#sleep-log").html(new SleepView({el: $('#sleep-app'), model: sleepLog}));
+      }
+    });
+  },
+});
+
+var routes = new AppRoutes();
+Backbone.history.start();
+//Backbone.history.start({pushState: true});
+
