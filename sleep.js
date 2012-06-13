@@ -123,7 +123,7 @@ var SleepAddView = Backbone.View.extend({
 
   events: {
     "keydown #date-boxes": "createOnEnter",
-    "blur #date-boxes": "showTimeDiffInWords",
+    "keyup #date-boxes": "showTimeDiffInWords",
   },
 
   startTime: function() {
