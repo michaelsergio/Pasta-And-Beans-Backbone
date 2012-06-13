@@ -1,3 +1,7 @@
 .hidden {
   display:none;
 }
+
+a.remove:hover {
+  opacity: 0.4;
+}

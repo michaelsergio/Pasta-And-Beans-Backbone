@@ -64,7 +64,9 @@ var SleepItemView = Backbone.View.extend({
     "click a.remove" : "clear"
   },
 
-  template: _.template('<%= started %>: <%= time_in_words %> <a href="#" class="remove">[x]</a>'),
+  template: _.template('\
+             <a href="#" class="remove"><i class="icon-remove"></i></a> \
+             <%= started %>: <%= time_in_words %>'),
 
   initialize: function() {
     this.model.bind('change', this.render, this);
@@ -175,8 +177,16 @@ var SleepView = Backbone.View.extend({
     this.model.bind('remove', this.render,this);
   },
 
+  renderCount: function(count) {
+    var count_str;
+    if (count == 0) count_str = "No Log Entries";
+    else if (count == 1) count_str = "1 Log Entry";
+    else count_str = count + " Log Entries";
+    $('#sleep-log-count').text(count_str);
+  },
+
   render:function() {
-    $('#sleep-log-count').text(this.model.length);
+    this.renderCount(this.model.length);
     var log = this.$("#sleep-log");
     log.empty();
     this.model.each(function(sleep) {
@@ -186,7 +196,7 @@ var SleepView = Backbone.View.extend({
   },
 
   addOne: function(sleep) {
-    $('#sleep-log-count').text(this.model.length);
+    this.renderCount(this.model.length);
     var view = new SleepItemView({model: sleep});
     this.$("#sleep-log").append(view.render().el);
   },
