@@ -54,6 +54,21 @@ var SleepItemView = Backbone.View.extend({
 
 var SleepAddView = Backbone.View.extend({ 
   initialize: function() {
+  },
+
+  template:
+        '<div id="date-boxes"> \
+          <input id="start-date" type="text" /> \
+          <input id="start-time" type="text" /> \
+          - \
+          <input id="end-date" type="text" /> \
+          <input id="end-time" type="text" /> \
+        </div> \
+        <p id="time-between"></p> \
+        ',
+
+  render: function() {
+    this.$el.html(this.template);
     this.input_start_date  = this.$("#start-date");
     this.input_end_date = this.$("#end-date");
     this.input_start_time = this.$("#start-time");
@@ -140,7 +155,6 @@ var SleepView = Backbone.View.extend({
   initialize: function() { 
     this.model.bind('add', this.addOne, this);
     this.model.bind('remove', this.render,this);
-    this.render();
   },
 
   render:function() {
@@ -164,6 +178,7 @@ var SleepView = Backbone.View.extend({
 
 var sleepLog = new SleepLog();
 
+var sleepView = new SleepAddView({el: $('#sleep-add'), model: sleepLog});
 var AppRoutes = Backbone.Router.extend({
   routes: {
     "sleep/log": "sleepLog",
@@ -171,15 +186,14 @@ var AppRoutes = Backbone.Router.extend({
   },
 
   addSleep: function() {
-  $('#sleep-add').show();
-    var sleepView = new SleepAddView({el: $('#sleep-add'), model: sleepLog});
+    sleepView.render();
   },
 
   sleepLog: function() {
-    $('#sleep-add').hide();
+    $('#sleep-add').empty();
     sleepLog.fetch({ 
       success: function() {
-        new SleepView({el: $('#sleep-app'), model: sleepLog});
+        new SleepView({el: $('#sleep-app'), model: sleepLog}).render();
       }
     });
   },
