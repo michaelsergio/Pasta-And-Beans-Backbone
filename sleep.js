@@ -1,3 +1,27 @@
+_.mixin({timeDiffInWords: function(diff) {
+    //FIXME for negative numbers
+    // no integer division in javascript :(
+    if (isNaN(diff)) {
+      return "Fix the bad input dates";
+    }
+    else {
+      var days = Math.floor(diff / 86400000);
+      var hours = Math.floor(diff / 3600000 % 24);
+      var minutes = Math.floor(diff / 60000 % 60);
+
+      var time_arr = [hours, "hours"];
+      if (minutes) {
+        time_arr = time_arr.concat([minutes, "minutes"]);
+      }
+      if (days) {
+        time_arr = [days, "days "].concat(time_arr);
+      }
+
+      return time_arr.join(" ");
+    }
+  }
+});
+
 var SleepItem = Backbone.Model.extend({
   initialize: function() {
     dtStart: this.get('dtStart');
@@ -12,6 +36,12 @@ var SleepItem = Backbone.Model.extend({
 
   timeBetween: function() {
     return new Date(this.get('dtEnd')) - new Date(this.get('dtStart'));
+  },
+
+  timeDiffInWords: function() {
+    var diff = this.timeBetween();
+    return _(diff).timeDiffInWords();
+
   },
 
   clear: function() {
@@ -41,7 +71,7 @@ var SleepItemView = Backbone.View.extend({
 
   render: function() {
     var start = new Date(this.model.get('dtStart'));
-    var between = this.model.timeBetween();
+    var between = this.model.timeDiffInWords();
     this.$el.text(start.toDateString() + ": " + between);
     return this;
   },
@@ -112,26 +142,12 @@ var SleepAddView = Backbone.View.extend({
     return this.endTime() - this.startTime();
   },
 
+
   showTimeDiffInWords: function() {
-    //FIXME for negative numbers
-    // no integer division in javascript :(
     var diff = this.timeDiff();
+    var time_diff_str = _(diff).timeDiffInWords();
 
-    if (isNaN(diff)) {
-      this.time_between.text("Fix the bad input dates");
-    }
-    else {
-      var days = Math.floor(diff / 86400000);
-      var hours = Math.floor(diff / 3600000 % 24);
-      var minutes = Math.floor(diff / 60000 % 60);
-
-      var time_str = hours + " hours " + minutes + " minutes";
-      if (days) {
-        time_str = days + " days " + time_str;
-      }
-
-      this.time_between.text(time_str);
-    }
+    this.time_between.text(time_diff_str);
   },
 
   createOnEnter: function(e) {
