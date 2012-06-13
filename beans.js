@@ -73,7 +73,7 @@ var SleepAddView = Backbone.View.extend({
   },
 
   events: {
-    "keypress #date-boxes": "createOnEnter",
+    "keydown #date-boxes": "createOnEnter",
     "blur #date-boxes": "showTimeDiffInWords",
   },
 
@@ -121,6 +121,7 @@ var SleepAddView = Backbone.View.extend({
 
   createOnEnter: function(e) {
     if (e.keyCode == 13) {
+      e.preventDefault();
       if (this.timeDiff() > 0) {
         this.model.create({
           dtStart: this.startTime(),
@@ -170,10 +171,12 @@ var AppRoutes = Backbone.Router.extend({
   },
 
   addSleep: function() {
-    var sleepView = new SleepAddView({el: $('#sleep-app'), model: sleepLog});
+  $('#sleep-add').show();
+    var sleepView = new SleepAddView({el: $('#sleep-add'), model: sleepLog});
   },
 
   sleepLog: function() {
+    $('#sleep-add').hide();
     sleepLog.fetch({ 
       success: function() {
         new SleepView({el: $('#sleep-app'), model: sleepLog});
@@ -184,5 +187,3 @@ var AppRoutes = Backbone.Router.extend({
 
 var routes = new AppRoutes();
 Backbone.history.start();
-//Backbone.history.start({pushState: true});
-
