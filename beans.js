@@ -41,14 +41,9 @@ var SleepItemView = Backbone.View.extend({
     this.model.bind('destroy', this.remove, this);
   },
 
-  remove: function() {
-    this.model.clear();
-  },
-
   render: function() {
     var start = new Date(this.model.get('dtStart'));
     var between = this.model.timeBetween();
-    console.log(start);
     this.$el.text(start.toDateString() + ": " + between);
     return this;
   }
@@ -135,7 +130,9 @@ var SleepView = Backbone.View.extend({
 
   addOne: function(sleep) {
     var view = new SleepItemView({model: sleep});
-    this.$("#sleep-log").append(view.render().el);
+    var elem = view.render().el;
+    console.log(elem);
+    this.$("#sleep-log").append(elem);
   },
 
   createOnEnter: function(e) {
