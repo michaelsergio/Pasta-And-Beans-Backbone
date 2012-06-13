@@ -1,11 +1,21 @@
 var SleepItem = Backbone.Model.extend({
   initialize: function() {
-    //dateStart: this.get('dtStart');
-    //dateEnd: this.get('dtEnd')
+    dtStart: this.get('dtStart');
+    dtEnd: this.get('dtEnd')
   },
 
-  hoursBetween: function() {
-    return 0;
+  validate: function(attrs) {
+    if (new Date(attrs.dtEnd) - new Date (attrs.dtStart) <= 0) {
+      return "end date must come after start date";
+    }
+  },
+
+  timeBetween: function() {
+    return new Date(this.get('dtEnd')) - new Date(this.get('dtStart'));
+  },
+
+  clear: function() {
+    this.destroy();
   }
   
 }); 
@@ -15,11 +25,38 @@ var SleepLog = Backbone.Collection.extend({
   localStorage: new Store("sleep-backbone")
 });
 
-var SleepView = Backbone.View.extend({
-  el: $('#sleep-app'),
+var SleepLog = new SleepLog;
 
+
+var SleepItemView = Backbone.View.extend({
   tagName: "li", 
   className: "sleep-row",
+
+  events: {
+    "dblclick" : "remove"
+  },
+
+  initialize: function() {
+    this.model.bind('change', this.render, this);
+    this.model.bind('destroy', this.remove, this);
+  },
+
+  remove: function() {
+    this.model.clear();
+  },
+
+  render: function() {
+    var start = new Date(this.model.get('dtStart'));
+    var between = this.model.timeBetween();
+    console.log(start);
+    this.$el.text(start.toDateString() + ": " + between);
+    return this;
+  }
+
+});
+
+var SleepView = Backbone.View.extend({
+  el: $('#sleep-app'),
   
   initialize: function() { 
     this.input_start_date  = this.$("#start-date");
@@ -27,22 +64,25 @@ var SleepView = Backbone.View.extend({
     this.input_start_time = this.$("#start-time");
     this.input_end_time = this.$("#end-time");
     this.time_between = this.$("#time-between");
-
     this.inputReset();
-    this.showTimeDiffInWords();
+
+    SleepLog.bind('add', this.addOne, this);
+    SleepLog.bind('reset', this.addAll, this);
+    SleepLog.fetch();
   },
 
   inputReset: function() {
     var today = Date.now();
+    var tommorow = new Date(today.getTime() + 86400000);
     this.input_start_date.val(today.getMonth() +"/"+ today.getDay()+"/"+ today.getFullYear()); 
-    this.input_end_date.val(today.getMonth() +"/"+ today.getDay()+"/"+ today.getFullYear()); 
+    this.input_end_date.val(tommorow.getMonth() +"/"+ tommorow.getDay()+"/"+ tommorow.getFullYear()); 
     this.input_start_time.val("22:00");
     this.input_end_time.val("8:00");
-  
+    this.showTimeDiffInWords();
   },
 
   events: {
-    //"keypress .edit": "updateOnEnter",
+    "keypress #date-boxes": "createOnEnter",
     "blur #date-boxes": "showTimeDiffInWords",
   },
 
@@ -88,18 +128,33 @@ var SleepView = Backbone.View.extend({
     }
   },
 
-  close: function() {
-    if (isNaN(diff)) {
-      return;
-    }
 
-    this.
-    
-    this.inputReset();
+  addAll: function() {
+    SleepLog.each(this.addOne);
   },
 
-  render: function(e) {
-    if (e.keyCode == 13) this.close();
+  addOne: function(sleep) {
+    var view = new SleepItemView({model: sleep});
+    this.$("#sleep-log").append(view.render().el);
+  },
+
+  createOnEnter: function(e) {
+    if (e.keyCode == 13) {
+      if (this.timeDiff() > 0) {
+        var sleep = SleepLog.create({
+          dtStart: this.startTime(),
+          dtEnd: this.endTime()
+        });
+
+        SleepLog.add(sleep);
+
+        this.inputReset();
+      }
+    }
+  },
+
+  render: function() {
+    return this;
   }
 });
 
