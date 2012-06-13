@@ -25,8 +25,6 @@ var SleepLog = Backbone.Collection.extend({
   localStorage: new Store("sleep-backbone")
 });
 
-//var SleepLog = new SleepLog;
-
 
 var SleepItemView = Backbone.View.extend({
   tagName: "li", 
@@ -51,21 +49,13 @@ var SleepItemView = Backbone.View.extend({
 });
 
 var SleepAddView = Backbone.View.extend({ 
-  
-});
-
-var SleepView = Backbone.View.extend({
-  
-  initialize: function() { 
+  initialize: function() {
     this.input_start_date  = this.$("#start-date");
     this.input_end_date = this.$("#end-date");
     this.input_start_time = this.$("#start-time");
     this.input_end_time = this.$("#end-time");
     this.time_between = this.$("#time-between");
     this.inputReset();
-
-    this.model.bind('add', this.addOne, this);
-    this.model.bind('reset', this.addAll, this);
   },
 
   inputReset: function() {
@@ -125,18 +115,6 @@ var SleepView = Backbone.View.extend({
     }
   },
 
-
-  addAll: function() {
-    this.model.each(this.addOne);
-  },
-
-  addOne: function(sleep) {
-    var view = new SleepItemView({model: sleep});
-    var elem = view.render().el;
-    console.log(elem);
-    this.$("#sleep-log").append(elem);
-  },
-
   createOnEnter: function(e) {
     if (e.keyCode == 13) {
       if (this.timeDiff() > 0) {
@@ -152,11 +130,40 @@ var SleepView = Backbone.View.extend({
     }
   },
 
-  render: function() {
-    return this;
-  }
+
 });
 
+var SleepView = Backbone.View.extend({
+  initialize: function() { 
+    //this.model.bind('add', this.addOne, this);
+    //this.model.bind('reset', this.addAll, this);
+    this.addCollection(this.model);
+  },
+
+  addCollection: function(sleepCollection) {
+    var log = this.$("#sleep-log");
+    log.empty();
+    sleepCollection.each(function(sleep) {
+      var view = new SleepItemView({model: sleep});
+      log.append(view.render().el);
+    });
+    
+  },
+
+  addAll: function() {
+    this.model.each(this.addOne);
+  },
+
+  addOne: function(sleep) {
+    var view = new SleepItemView({model: sleep});
+
+    this.$("#sleep-log").append(view.render().el);
+  },
+
+});
+
+
+var sleepLog = new SleepLog();
 
 var AppRoutes = Backbone.Router.extend({
   routes: {
@@ -167,14 +174,14 @@ var AppRoutes = Backbone.Router.extend({
   addSleep: function() {
     //$('#pastabeans').children().addClass('hidden');
     //$('#hi-app').removeClass('hidden');
+    var sleepView = new SleepAddView({el: $('#sleep-app'), model: sleepLog});
   },
 
   sleepLog: function() {
-    var sleepLog = new SleepLog();
-    sleepLog.fetch(
-    { 
+    sleepLog.fetch({ 
       success: function() {
-        $("#sleep-log").html(new SleepView({el: $('#sleep-app'), model: sleepLog}));
+        //$("#sleep-log").html(new SleepView({el: $('#sleep-app'), model: sleepLog}));
+        new SleepView({el: $('#sleep-app'), model: sleepLog});
       }
     });
   },
