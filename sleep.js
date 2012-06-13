@@ -61,8 +61,10 @@ var SleepItemView = Backbone.View.extend({
   className: "sleep-row",
 
   events: {
-    "click" : "clear"
+    "click a.remove" : "clear"
   },
+
+  template: _.template('<%= started %>: <%= time_in_words %> <a href="#" class="remove">[x]</a>'),
 
   initialize: function() {
     this.model.bind('change', this.render, this);
@@ -70,9 +72,9 @@ var SleepItemView = Backbone.View.extend({
   },
 
   render: function() {
-    var start = new Date(this.model.get('dtStart'));
+    var started = new Date(this.model.get('dtStart')).toDateString();
     var between = this.model.timeDiffInWords();
-    this.$el.text(start.toDateString() + ": " + between);
+    this.$el.html(this.template({started: started, time_in_words: between}));
     return this;
   },
 
