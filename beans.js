@@ -31,7 +31,7 @@ var SleepItemView = Backbone.View.extend({
   className: "sleep-row",
 
   events: {
-    "dblclick" : "remove"
+    "click" : "clear"
   },
 
   initialize: function() {
@@ -44,6 +44,10 @@ var SleepItemView = Backbone.View.extend({
     var between = this.model.timeBetween();
     this.$el.text(start.toDateString() + ": " + between);
     return this;
+  },
+
+  clear: function() {
+    this.model.clear();
   }
 
 });
@@ -118,12 +122,10 @@ var SleepAddView = Backbone.View.extend({
   createOnEnter: function(e) {
     if (e.keyCode == 13) {
       if (this.timeDiff() > 0) {
-        var sleep = this.model.create({
+        this.model.create({
           dtStart: this.startTime(),
           dtEnd: this.endTime()
         });
-
-        this.model.add(sleep);
 
         this.inputReset();
       }
@@ -135,28 +137,24 @@ var SleepAddView = Backbone.View.extend({
 
 var SleepView = Backbone.View.extend({
   initialize: function() { 
-    //this.model.bind('add', this.addOne, this);
-    //this.model.bind('reset', this.addAll, this);
-    this.addCollection(this.model);
+    this.model.bind('add', this.addOne, this);
+    this.model.bind('remove', this.render,this);
+    this.render();
   },
 
-  addCollection: function(sleepCollection) {
+  render:function() {
+    $('#sleep-log-count').text(this.model.length);
     var log = this.$("#sleep-log");
     log.empty();
-    sleepCollection.each(function(sleep) {
+    this.model.each(function(sleep) {
       var view = new SleepItemView({model: sleep});
       log.append(view.render().el);
     });
-    
-  },
-
-  addAll: function() {
-    this.model.each(this.addOne);
   },
 
   addOne: function(sleep) {
+    $('#sleep-log-count').text(this.model.length);
     var view = new SleepItemView({model: sleep});
-
     this.$("#sleep-log").append(view.render().el);
   },
 
@@ -172,15 +170,12 @@ var AppRoutes = Backbone.Router.extend({
   },
 
   addSleep: function() {
-    //$('#pastabeans').children().addClass('hidden');
-    //$('#hi-app').removeClass('hidden');
     var sleepView = new SleepAddView({el: $('#sleep-app'), model: sleepLog});
   },
 
   sleepLog: function() {
     sleepLog.fetch({ 
       success: function() {
-        //$("#sleep-log").html(new SleepView({el: $('#sleep-app'), model: sleepLog}));
         new SleepView({el: $('#sleep-app'), model: sleepLog});
       }
     });
