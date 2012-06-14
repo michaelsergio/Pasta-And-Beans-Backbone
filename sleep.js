@@ -204,24 +204,28 @@ var SleepView = Backbone.View.extend({
 });
 
 
-var sleepLog = new SleepLog();
+//var sleepLog = new SleepLog();
 
-var sleepView = new SleepAddView({el: $('#sleep-add'), model: sleepLog});
 var AppRoutes = Backbone.Router.extend({
   routes: {
-    "sleep/log": "sleepLog",
+    "sleep/log": "showSleepLog",
     "sleep/add": "addSleep"
   },
 
   addSleep: function() {
-    sleepView.render();
+    if (!this.sleepLog) this.showSleepLog();
+    if (!this.sleepView) this.sleepView = new SleepAddView({el: $('#sleep-add'), model: this.sleepLog});
+    this.sleepView.render();
   },
 
-  sleepLog: function() {
+  showSleepLog: function() {
     $('#sleep-add').empty();
-    sleepLog.fetch({ 
+    if (!this.sleepLog) this.sleepLog = new SleepLog();
+    var log = this.sleepLog;
+    this.sleepLog.fetch({ 
       success: function() {
-        new SleepView({el: $('#sleep-app'), model: sleepLog}).render();
+        if (!this.sleepView) this.sleepView = new SleepView({el: $('#sleep-app'), model: log});
+        this.sleepView.render();
       }
     });
   },
