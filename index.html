@@ -21,7 +21,21 @@
       </ul>
     </div>
 
-    </div>
+  <div id="food-app">
+    <form id="food-add">
+      <input name="name" type="text" placeholder="food name"/>
+      <input name="quantity-type" type="text" placeholder="quanitity type: i.e:ozs, liters, blank... "/>
+      <input name="category" type="text" placeholder="category i.e:fruit, vegtable, snack..."/>
+    </form>
+  </div>
+
+  <div id="meal-app">
+    <form id="meal-add">
+      <input name="date" type="text" placeholder="date"/>
+      <input name="type" type="text" placeholder="type: i.e: Lunch, Dinner, Snack"/>
+    </form>
+    <form id="meal-foods"></form>
+  </div>
 
 
   </div>
@@ -35,6 +49,8 @@
 
   <!-- Application core (Order matters) -->
   <script src="./sleep.js"></script>
+  <script src="./food.js"></script>
+  <script src="./meals.js"></script>
 
   <!-- Modules (Order does not matter) -->
 </body>
