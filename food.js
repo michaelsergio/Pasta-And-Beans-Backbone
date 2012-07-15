@@ -13,11 +13,11 @@ var FoodAddView = Backbone.View.extend({
   },
 
   initialize: function(options) {
-    this.foods = options["collection"];
+    this.foods = options.collection;
   },
 
   newFood: function(e) {
-    if (e.charCode == 13) {
+    if (e.charCode === 13) {
       var food = {};
       _.each(this.$el.serializeArray(), function(obj) {
         food[obj.name] = obj.value;
@@ -62,7 +62,7 @@ var FoodCheckList = Backbone.View.extend({
 this.foods = new Foods();
 this.foods.fetch({ 
   success: function() {
-    if (!this.foodCheckList) this.foodCheckList = new FoodCheckList({collection: foods});
-    if (!this.foodAddView) this.foodAddView = new FoodAddView({collection: foods});
+    if (!this.foodCheckList) { this.foodCheckList = new FoodCheckList({collection: foods});}
+    if (!this.foodAddView) { this.foodAddView = new FoodAddView({collection: foods});}
   }
 });

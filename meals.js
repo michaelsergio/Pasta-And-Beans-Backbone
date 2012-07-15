@@ -13,13 +13,13 @@ var MealAddView = Backbone.View.extend({
   },
 
   initialize: function(options) {
-    this.meals = options["collection"];
+    this.meals = options.collection;
   },
 
   newMeal: function(e) {
-    if (e.charCode == 13) {
+    if (e.charCode === 13) {
       var meal = {};
-      _.map(this.$('form'), function(name, val) {meal.name = meal.val });
+      _.map(this.$('form'), function(name, val) {meal.name = meal.val});
       this.meals.create(meal);
       console.log(this.meals.length);
     }
