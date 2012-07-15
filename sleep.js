@@ -1,31 +1,26 @@
 _.mixin({timeDiffInWords: function(diff) {
     //FIXME for negative numbers
     // no integer division in javascript :(
-    if (isNaN(diff)) {
-      return "Fix the bad input dates";
-    }
-    else {
-      var days = Math.floor(diff / 86400000);
-      var hours = Math.floor(diff / 3600000 % 24);
-      var minutes = Math.floor(diff / 60000 % 60);
+    if (isNaN(diff)){ return "Fix the bad input dates";}
 
-      var time_arr = [hours, "hours"];
-      if (minutes) {
-        time_arr = time_arr.concat([minutes, "minutes"]);
-      }
-      if (days) {
-        time_arr = [days, "days "].concat(time_arr);
-      }
+    var days = Math.floor(diff / 86400000);
+    var hours = Math.floor(diff / 3600000 % 24);
+    var minutes = Math.floor(diff / 60000 % 60);
 
-      return time_arr.join(" ");
+    var time_arr = [hours, "hours"];
+    if (minutes) {
+      time_arr = time_arr.concat([minutes, "minutes"]);
     }
-  }
+    if (days) {
+      time_arr = [days, "days "].concat(time_arr);
+    }
+
+    return time_arr.join(" ");
+    }
 });
 
 var SleepItem = Backbone.Model.extend({
   initialize: function() {
-    dtStart: this.get('dtStart');
-    dtEnd: this.get('dtEnd')
   },
 
   validate: function(attrs) {
@@ -114,8 +109,12 @@ var SleepAddView = Backbone.View.extend({
   inputReset: function() {
     var today = Date.now();
     var tommorow = new Date(today.getTime() + 86400000);
-    this.input_start_date.val(today.getMonth() +"/"+ today.getDay()+"/"+ today.getFullYear()); 
-    this.input_end_date.val(tommorow.getMonth() +"/"+ tommorow.getDay()+"/"+ tommorow.getFullYear()); 
+    this.input_start_date.val(today.getMonth() + "/" + 
+                              today.getDay() + "/" + 
+                              today.getFullYear()); 
+    this.input_end_date.val(tommorow.getMonth() + "/" + 
+                            tommorow.getDay() + "/" + 
+                            tommorow.getFullYear()); 
     this.input_start_time.val("22:00");
     this.input_end_time.val("8:00");
     this.showTimeDiffInWords();
@@ -155,7 +154,7 @@ var SleepAddView = Backbone.View.extend({
   },
 
   createOnEnter: function(e) {
-    if (e.keyCode == 13) {
+    if (e.keyCode === 13) {
       e.preventDefault();
       if (this.timeDiff() > 0) {
         this.model.create({
@@ -179,9 +178,9 @@ var SleepView = Backbone.View.extend({
 
   renderCount: function(count) {
     var count_str;
-    if (count == 0) count_str = "No Log Entries";
-    else if (count == 1) count_str = "1 Log Entry";
-    else count_str = count + " Log Entries";
+    if (count === 0){ count_str = "No Log Entries";}
+    else if (count === 1){ count_str = "1 Log Entry";}
+    else { count_str = count + " Log Entries";}
     $('#sleep-log-count').text(count_str);
   },
 
@@ -213,18 +212,25 @@ var AppRoutes = Backbone.Router.extend({
   },
 
   addSleep: function() {
-    if (!this.sleepLog) this.showSleepLog();
-    if (!this.sleepView) this.sleepView = new SleepAddView({el: $('#sleep-add'), model: this.sleepLog});
+    if (!this.sleepLog) { 
+      this.showSleepLog();
+    }
+    if (!this.sleepView) { 
+      this.sleepView = new SleepAddView({el: $('#sleep-add'), 
+                                         model: this.sleepLog});
+    }
     this.sleepView.render();
   },
 
   showSleepLog: function() {
     $('#sleep-add').empty();
-    if (!this.sleepLog) this.sleepLog = new SleepLog();
+    if (!this.sleepLog){ this.sleepLog = new SleepLog();}
     var log = this.sleepLog;
     this.sleepLog.fetch({ 
       success: function() {
-        if (!this.sleepView) this.sleepView = new SleepView({el: $('#sleep-app'), model: log});
+        if (!this.sleepView) { 
+          this.sleepView = new SleepView({el: $('#sleep-app'), model: log});
+        }
         this.sleepView.render();
       }
     });
