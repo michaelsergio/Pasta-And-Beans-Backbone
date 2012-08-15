@@ -50,11 +50,12 @@ var FoodCheckList = Backbone.View.extend({
   },
 
   render: function() {
-    this.$el.empty();
-    this.collection.each(function(food) {
+    var self = this;
+    self.$el.empty();
+    self.collection.each(function(food) {
       var item = new FoodCheckItem({model:food});
-      this.$el.append(item.render());
-    }, this);
+      self.$el.append(item.render());
+    });
   }
 });
 

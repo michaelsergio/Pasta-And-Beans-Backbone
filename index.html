@@ -4,6 +4,7 @@
 	<meta charset="UTF-8">
 	<title>Pasta And Beans</title>
   <link rel="stylesheet" href="./assets/css/main.css" />
+  <link rel="stylesheet" href="./assets/css/jquery-ui.css" />
   <link rel="stylesheet" href="./assets/bootstrap/css/bootstrap.min.css" />
   <link rel="stylesheet" href="./assets/bootstrap/css/bootstrap-responsive.min.css" />
 </head>
@@ -21,6 +22,7 @@
       </ul>
     </div>
 
+  <!--
   <div id="food-app">
     <form id="food-add">
       <input name="name" type="text" placeholder="food name"/>
@@ -28,20 +30,65 @@
       <input name="category" type="text" placeholder="category i.e:fruit, vegtable, snack..."/>
     </form>
   </div>
+  </!-->
 
-  <div id="meal-app">
-    <form id="meal-add">
-      <input name="date" type="text" placeholder="date"/>
-      <input name="type" type="text" placeholder="type: i.e: Lunch, Dinner, Snack"/>
+  <input type="submit" class="btn" value="Add Meal" id="meal-add-button" />
+
+  <div id="meal-app" style="display:none;">
+    <h2>New Meal</h2>
+    <form id="meal-add" class="form-horizontal">
+      <fieldset>
+        <div class="control-group">
+          <label for="" class="control-label">Name</label>
+          <div class="controls">
+            <input id="meal-add-name" name="name" type="text">
+          </div>
+        </div>
+        <div class="control-group">
+          <label for="" class="control-label">Date</label>
+          <div class="controls">
+            <input id="meal-add-date" name="date" type="text" class="date" />
+          </div>
+        </div>
+        <div class="control-group">
+          <label for="" class="control-label">Ingredients</label>
+          <div class="controls">
+            <input id="meal-add-ingredients" name="ingredients" type="text" />
+            <p class="help-block">Enter in a comma separated list.</p>
+          </div>
+        </div>
+        <div class="control-group">
+          <label for="" class="control-label">Type</label>
+          <div class="controls">
+            <select id="meal-add-type" name="type">
+              <option>Breakfast</option>
+              <option>Lunch</option>
+              <option>Dinner</option>
+              <option>Snack</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-actions">
+        	<input type="button" id="meal-add-btn" class="btn btn-primary" value="Add Meal"/>
+        	<input type="button" id="meal-add-close-btn" class="btn" value="Close"/>
+        </div>
+        
+      </fieldset>
     </form>
+    <!--
+    <h3>Foods</h3>
     <form id="meal-foods"></form>
+    </!-->
   </div>
 
+  <h3>Timeline</h3>
+  <form id="timeline"></form>
 
   </div>
 
   <!-- Third-Party Libraries (Order matters) -->
   <script src="./assets/js/libs/jquery.js"></script>
+  <script src="./assets/js/libs/jquery-ui-1.8.22.custom.min.js"></script>
   <script src="./assets/js/libs/underscore.js"></script>
   <script src="./assets/js/libs/backbone.js"></script>
   <script src="./assets/js/libs/backbone.localStorage.js"></script>
@@ -51,6 +98,8 @@
   <script src="./sleep.js"></script>
   <script src="./food.js"></script>
   <script src="./meals.js"></script>
+  <script src="./timeline.js"></script>
+  <script src="./app.js"></script>
 
   <!-- Modules (Order does not matter) -->
 </body>

@@ -5,3 +5,28 @@
 a.remove:hover {
   opacity: 0.4;
 }
+
+#timeline .type {
+
+}
+
+#timeline .timeline-day {
+  margin-bottom: 10px;
+}
+
+#timeline .meal-item {
+}
+
+#timeline .timeline-date {
+  display: inline-block;
+}
+
+#timeline .type {
+  text-decoration: underline;
+}
+#timeline .meal-item .meal-name {
+  font-weight: bold;
+}
+#timeline .meal-item .meal-ingredients {
+  
+}
